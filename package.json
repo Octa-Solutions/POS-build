@@ -1,0 +1,48 @@
+{
+  "name": "octa-pos",
+  "version": "1.0.2",
+  "author": "octasolutions",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "npx electron-builder --windows",
+    "run-docker": "docker run --rm -ti  --env-file <(env | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS_TAG|TRAVIS|TRAVIS_REPO_|TRAVIS_BUILD_|TRAVIS_BRANCH|TRAVIS_PULL_REQUEST_|APPVEYOR_|CSC_|GH_|GITHUB_|BT_|AWS_|STRIP|BUILD_')  --env ELECTRON_CACHE=\"/root/.cache/electron\"  --env ELECTRON_BUILDER_CACHE=\"/root/.cache/electron-builder\"  -v ${PWD}:/project  -v ${PWD##*/}-node-modules:/project/node_modules  -v ~/.cache/electron:/root/.cache/electron  -v ~/.cache/electron-builder:/root/.cache/electron-builder  electronuserland/builder:wine"
+  },
+  "repository": "https://github.com/Octa-Solutions/POS-build",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "34.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "description": "An Ionic project",
+  "build": {
+    "appId": "com.octasolutions.pos",
+    "productName": "Octa POS",
+    "win": {
+      "target": "nsis"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "publish": [
+    {
+      "provider": "github",
+      "releaseType": "release"
+    }
+  ],
+  "dependencies": {
+    "electron-updater": "^6.3.9"
+  },
+  "nsis":{
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": "always"
+  }
+}
