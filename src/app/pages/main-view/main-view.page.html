@@ -1,0 +1,54 @@
+<ion-content>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col class="items-div" size="6" size-md="7">
+        <ion-header #grid_header>
+          <ion-toolbar>
+            <ion-searchbar (ionInput)="searchBarChange($event)" #searchbar></ion-searchbar>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content [style]="items_grid_style">
+          <app-items-grid></app-items-grid>
+        </ion-content>
+        <ion-footer class="grid-footer" #grid_footer>
+          <ion-toolbar color="tertiary">
+            All Catags | Categ1 | Categ2 | Categ3
+          </ion-toolbar>
+        </ion-footer>
+      </ion-col>
+
+      <ion-col class="checkout-div" size="6" size-md="5">
+        <ion-header #list_header>
+          <ion-toolbar color="secondary">
+            <ion-title>Octa POS</ion-title>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content [style]="checkout_list_style">
+          <app-checkout-item-list></app-checkout-item-list>
+        </ion-content>
+        <ion-footer class="list-footer" #list_footer>
+          <ion-toolbar>
+            <ion-button expand="block" class="pay-btn">
+              <div>
+                <div>
+                  Pay
+                </div>
+                <div class="total-amount">
+                  <div class="total-amount-money">
+                    120
+                  </div>
+                  <div class="total-currency">
+                    $
+                  </div>
+                </div>
+              </div>
+            </ion-button>
+          </ion-toolbar>
+        </ion-footer>
+      </ion-col>
+
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

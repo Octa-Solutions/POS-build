@@ -1,0 +1,27 @@
+<ion-grid>
+  <ion-row class="titles-row">
+    <ion-col size="3">Item</ion-col>
+    <ion-col size="2">Unit</ion-col>
+    <ion-col size="3">Quantity</ion-col>
+    <ion-col size="2">Price</ion-col>
+    <ion-col size="2"></ion-col>
+  </ion-row>
+  <ion-row class="item" *ngFor="let item of itemz">
+    <ion-col size="3">Lorem ipsum</ion-col>
+    <ion-col size="2">Piece</ion-col>
+    <ion-col size="3" class="quantity-col">
+      <ion-icon style="cursor: pointer; margin-inline: 1px" color="warning" name="remove-circle-outline"></ion-icon>
+      1
+      <ion-icon style="cursor: pointer; margin-inline: 1px" color="success" name="add-circle-outline"></ion-icon>
+    </ion-col>
+    <ion-col size="2" class="price-col">
+      $
+      <ion-input ngModel="12.5" placeholder="0.00">
+
+      </ion-input>
+    </ion-col>
+    <ion-col size="2">
+      <ion-icon style="cursor: pointer; margin-inline: 1px" color="danger" name="trash-outline"></ion-icon>
+    </ion-col>
+  </ion-row>
+</ion-grid>

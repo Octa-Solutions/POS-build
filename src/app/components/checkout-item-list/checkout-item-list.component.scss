@@ -1,0 +1,35 @@
+ion-grid {
+    padding: 0;
+
+    ion-col {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.price-col {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+
+    ion-input {
+        text-align: center;
+    }
+}
+
+.quantity-col {
+    gap: 2px;
+}
+
+.item {
+    border-block-end: 1px solid var(--ion-color-primary-transparency);
+}
+
+.titles-row {
+    block-size: 2.5em;
+    border-block-end: 2px solid var(--ion-color-primary-transparency);
+    color: var(--ion-color-primary);
+    font-weight: bold;
+    font-size: 1.2em;
+}

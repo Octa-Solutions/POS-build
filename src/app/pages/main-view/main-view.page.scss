@@ -1,0 +1,54 @@
+ion-grid {
+    padding: 0;
+
+    ion-col {
+        padding: 0;
+    }
+}
+
+.checkout-div {
+    box-shadow: 3px 0px 14px 0px black;
+}
+
+.list-footer {
+    block-size: fit-content;
+    padding-block: 5px;
+
+    ion-toolbar {
+        block-size: 100%;
+        inline-size: 100%;
+    }
+}
+
+.grid-footer {
+    ion-toolbar {
+        padding: 5px;
+        padding-inline-start: 10px;
+    }
+}
+
+.grid-component-container {
+    block-size: calc(100vh - 140px);
+}
+
+.pay-btn div:first-child {
+    block-size: 2.5em;
+    font-size: 1.5em;
+    // text-transform: none;
+    inline-size: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .total-currency {
+        font-size: 1.5em;
+    }
+}
+
+.total-amount {
+    inline-size: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
