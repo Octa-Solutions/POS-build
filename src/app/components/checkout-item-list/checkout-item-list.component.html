@@ -1,27 +1,57 @@
 <ion-grid>
   <ion-row class="titles-row">
     <ion-col size="3">Item</ion-col>
-    <ion-col size="2">Unit</ion-col>
     <ion-col size="3">Quantity</ion-col>
-    <ion-col size="2">Price</ion-col>
+    <ion-col size="2">Unit Price</ion-col>
+    <ion-col size="2">Qt. Price</ion-col>
     <ion-col size="2"></ion-col>
   </ion-row>
-  <ion-row class="item" *ngFor="let item of itemz">
-    <ion-col size="3">Lorem ipsum</ion-col>
-    <ion-col size="2">Piece</ion-col>
+  <ion-row
+    class="item"
+    *ngFor="let checkout_item of checkout_item_list(); let i = index"
+  >
+    <ion-col size="3"
+      >{{ checkout_item.material_name }} ({{
+        checkout_item.selected_unit?.unit_name
+      }})</ion-col
+    >
     <ion-col size="3" class="quantity-col">
-      <ion-icon style="cursor: pointer; margin-inline: 1px" color="warning" name="remove-circle-outline"></ion-icon>
-      1
-      <ion-icon style="cursor: pointer; margin-inline: 1px" color="success" name="add-circle-outline"></ion-icon>
-    </ion-col>
-    <ion-col size="2" class="price-col">
-      $
-      <ion-input ngModel="12.5" placeholder="0.00">
-
+      <ion-icon
+        style="cursor: pointer; margin-inline: 1px"
+        color="warning"
+        name="remove-circle-outline"
+        (click)="removeMaterialQuantity(i)"
+      ></ion-icon>
+      <ion-input  min="0"
+        type="number"
+        [ngModel]="checkout_item.material_quantity"
+        (ngModelChange)="updateItemQuantity($event, i)"
+      >
       </ion-input>
+      <ion-icon
+        style="cursor: pointer; margin-inline: 1px"
+        color="success"
+        name="add-circle-outline"
+        (click)="addMaterialQuantity(i)"
+      ></ion-icon>
     </ion-col>
+    <ion-col size="2" class="unit-price-col">
+      $
+      <ion-input min="0"
+        [ngModel]="checkout_item.selected_unit?.default_price"
+        (ngModelChange)="changeItemUnitPrice($event, i)"
+        type="number"
+        placeholder="0.00"
+      ></ion-input>
+    </ion-col>
+    <ion-col size="2" class="price-col">$ {{ checkout_item.material_total_price }}</ion-col>
     <ion-col size="2">
-      <ion-icon style="cursor: pointer; margin-inline: 1px" color="danger" name="trash-outline"></ion-icon>
+      <ion-icon
+        style="cursor: pointer; margin-inline: 1px"
+        color="danger"
+        name="trash-outline"
+        (click)="deleteItemFromList(i)"
+      ></ion-icon>
     </ion-col>
   </ion-row>
 </ion-grid>

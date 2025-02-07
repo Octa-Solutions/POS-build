@@ -8,18 +8,24 @@ ion-grid {
     }
 }
 
-.price-col {
+.unit-price-col {
     display: flex;
     align-items: center;
     gap: 2px;
 
     ion-input {
+        inline-size: 45px;
         text-align: center;
     }
 }
 
 .quantity-col {
-    gap: 2px;
+    gap: 8px;
+
+    ion-input {
+        inline-size: 65px;
+        text-align: center;
+    }
 }
 
 .item {
@@ -32,4 +38,8 @@ ion-grid {
     color: var(--ion-color-primary);
     font-weight: bold;
     font-size: 1.2em;
+}
+
+.price-col {
+    text-wrap: nowrap;
 }

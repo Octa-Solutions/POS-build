@@ -9,7 +9,7 @@ describe('CheckoutItemListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ CheckoutItemListComponent ],
+      declarations: [CheckoutItemListComponent],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
