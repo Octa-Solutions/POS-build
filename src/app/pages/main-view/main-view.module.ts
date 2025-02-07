@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { MainViewPageRoutingModule } from './main-view-routing.module';
 
 import { MainViewPage } from './main-view.page';
-import { ItemsGridComponent } from 'src/app/components/items-grid/items-grid.component';
+import { MaterialGridComponent } from 'src/app/components/material-grid/material-grid.component';
 import { CheckoutItemListComponent } from 'src/app/components/checkout-item-list/checkout-item-list.component';
 
 @NgModule({
@@ -18,6 +18,6 @@ import { CheckoutItemListComponent } from 'src/app/components/checkout-item-list
     MainViewPageRoutingModule,
     CheckoutItemListComponent
   ],
-  declarations: [MainViewPage, ItemsGridComponent]
+  declarations: [MainViewPage, MaterialGridComponent]
 })
 export class MainViewPageModule {}

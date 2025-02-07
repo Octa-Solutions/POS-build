@@ -1,21 +1,63 @@
 <ion-content>
-
   <ion-grid>
     <ion-row>
-      <ion-col class="items-div" size="6" size-md="7">
+      <ion-col size="6" size-md="7">
         <ion-header #grid_header>
           <ion-toolbar>
-            <ion-searchbar (ionInput)="searchBarChange($event)" #searchbar></ion-searchbar>
+            <div class="search-toolbar-container">
+              <ion-searchbar
+                [placeholder]="
+                  search_by_barcode ? 'Scan Barcode' : 'Search Items'
+                "
+                type="string"
+                (ionInput)="searchIfBarcodeDisabled($event)"
+                (keypress)="searchIfEnter($event)"
+                #searchbar
+              >
+              </ion-searchbar>
+              @if (search_by_barcode) {
+                <span
+                  (click)="toggleSearchMethod()"
+                  class="mdi mdi-barcode"
+                ></span>
+              } @else {
+                <span
+                  (click)="toggleSearchMethod()"
+                  class="mdi mdi-barcode-off"
+                ></span>
+              }
+            </div>
           </ion-toolbar>
         </ion-header>
-        <ion-content [style]="items_grid_style">
-          <app-items-grid></app-items-grid>
+        <ion-content [style]="material_grid_content_style">
+          <div class="category-list-container scroll-shadows" #grid_categs>
+            <div>
+              <ion-buttons class="category-list">
+                @for (category of category_list; track $index) {
+                  <ion-button
+                    (click)="
+                      filterMaterialByCategory(category.material_category_id)
+                    "
+                    [class]="
+                      active_category_id() == category.material_category_id
+                        ? 'active-category'
+                        : ''
+                    "
+                    >{{ category.material_category_name }}</ion-button
+                  >
+                  @if ($index < category_list.length - 1) {
+                    <span>|</span>
+                  }
+                }
+              </ion-buttons>
+            </div>
+          </div>
+          <app-material-grid [style]="'display: block; ' + material_grid_style"
+            [search_value]="search_value"
+            #MaterialGridComponent
+            (materialEmitter)="addMaterialToCheckoutList($event)"
+          ></app-material-grid>
         </ion-content>
-        <ion-footer class="grid-footer" #grid_footer>
-          <ion-toolbar color="tertiary">
-            All Catags | Categ1 | Categ2 | Categ3
-          </ion-toolbar>
-        </ion-footer>
       </ion-col>
 
       <ion-col class="checkout-div" size="6" size-md="5">
@@ -25,30 +67,34 @@
           </ion-toolbar>
         </ion-header>
         <ion-content [style]="checkout_list_style">
-          <app-checkout-item-list></app-checkout-item-list>
+          <app-checkout-item-list
+            [checkout_item_list]="checkout_item_list"
+            (itemQuantityUpdated)="updateMainItemList($event)"
+            (deleteItemEmitter)="deleteItemFromList($event)"
+            (itemUnitPriceUpdated)="handlePriceUpdate($event)"
+          ></app-checkout-item-list>
         </ion-content>
         <ion-footer class="list-footer" #list_footer>
           <ion-toolbar>
-            <ion-button expand="block" class="pay-btn">
+            <ion-button
+              [disabled]="checkout_item_list.length == 0"
+              (click)="pay()"
+              expand="block"
+              class="pay-btn"
+            >
               <div>
-                <div>
-                  Pay
-                </div>
+                <div>Pay</div>
                 <div class="total-amount">
                   <div class="total-amount-money">
-                    120
+                    {{ transaction_total() }}
                   </div>
-                  <div class="total-currency">
-                    $
-                  </div>
+                  <div class="total-currency">$</div>
                 </div>
               </div>
             </ion-button>
           </ion-toolbar>
         </ion-footer>
       </ion-col>
-
     </ion-row>
   </ion-grid>
-
 </ion-content>

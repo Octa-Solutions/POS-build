@@ -1,5 +1,7 @@
 ion-grid {
     padding: 0;
+    block-size: 100vh;
+    overflow: hidden;
 
     ion-col {
         padding: 0;
@@ -7,7 +9,12 @@ ion-grid {
 }
 
 .checkout-div {
-    box-shadow: 3px 0px 14px 0px black;
+    ion-title {
+        text-align: center;
+        color: white;
+        font-weight: bolder;
+        font-size: 1.5em;
+    }
 }
 
 .list-footer {
@@ -20,15 +27,15 @@ ion-grid {
     }
 }
 
-.grid-footer {
-    ion-toolbar {
-        padding: 5px;
-        padding-inline-start: 10px;
+.category-list-container {
+    block-size: 62px;
+    .category-list {
+        background: #e2e2e2;
+        display: flex;
+        gap: 20px;
+        inline-size: 100%;
+        overflow: scroll;
     }
-}
-
-.grid-component-container {
-    block-size: calc(100vh - 140px);
 }
 
 .pay-btn div:first-child {
@@ -51,4 +58,73 @@ ion-grid {
     align-items: center;
     justify-content: center;
     gap: 10px;
+}
+
+.search-toolbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline-end: 10px;
+
+    ion-searchbar {
+        inline-size: 70%;
+    }
+
+    span.mdi {
+        font-size: 42px;
+    }
+}
+
+.active-category {
+    --background: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+    text-decoration: underline;
+}
+
+.scroll-shadows {
+    // max-block-size: 200px;
+    overflow: auto;
+
+    background:
+        /* Shadow Cover left */
+        linear-gradient(white 30%,
+            rgba(255, 255, 255, 0)) center left,
+
+        /* Shadow Cover right */
+        linear-gradient(rgba(255, 255, 255, 0),
+            white 70%) center right,
+
+        /* Shadow left */
+        radial-gradient(farthest-side at 50% 0,
+            rgba(0, 0, 0, 0.2),
+            rgba(0, 0, 0, 0)) center left,
+
+        /* Shadow right */
+        radial-gradient(farthest-side at 50% 100%,
+            rgba(0, 0, 0, 0.2),
+            rgba(0, 0, 0, 0)) center right;
+
+    background-repeat: no-repeat;
+    background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+    background-attachment: local, local, scroll, scroll;
+}
+
+@keyframes bannermoveleft {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(-180px, 0);
+    }
+}
+
+@keyframes bannermoveright {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(180px, 0);
+    }
 }
