@@ -29,8 +29,9 @@ ion-grid {
 
 .category-list-container {
     block-size: 62px;
+    padding: 0 22px;
+    background: #e2e2e2;
     .category-list {
-        background: #e2e2e2;
         display: flex;
         gap: 20px;
         inline-size: 100%;
@@ -79,52 +80,4 @@ ion-grid {
     --background: var(--ion-color-primary);
     color: var(--ion-color-primary-contrast);
     text-decoration: underline;
-}
-
-.scroll-shadows {
-    // max-block-size: 200px;
-    overflow: auto;
-
-    background:
-        /* Shadow Cover left */
-        linear-gradient(white 30%,
-            rgba(255, 255, 255, 0)) center left,
-
-        /* Shadow Cover right */
-        linear-gradient(rgba(255, 255, 255, 0),
-            white 70%) center right,
-
-        /* Shadow left */
-        radial-gradient(farthest-side at 50% 0,
-            rgba(0, 0, 0, 0.2),
-            rgba(0, 0, 0, 0)) center left,
-
-        /* Shadow right */
-        radial-gradient(farthest-side at 50% 100%,
-            rgba(0, 0, 0, 0.2),
-            rgba(0, 0, 0, 0)) center right;
-
-    background-repeat: no-repeat;
-    background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
-    background-attachment: local, local, scroll, scroll;
-}
-
-@keyframes bannermoveleft {
-    0% {
-        transform: translate(0, 0);
-    }
-
-    100% {
-        transform: translate(-180px, 0);
-    }
-}
-
-@keyframes bannermoveright {
-    0% {
-        transform: translate(0, 0);
-    }
-
-    100% {
-        transform: translate(180px, 0);
-    }
 }

@@ -30,8 +30,8 @@
           </ion-toolbar>
         </ion-header>
         <ion-content [style]="material_grid_content_style">
-          <div class="category-list-container scroll-shadows" #grid_categs>
-            <div>
+          <div class="category-list-container" #grid_categs>
+
               <ion-buttons class="category-list">
                 @for (category of category_list; track $index) {
                   <ion-button
@@ -50,7 +50,6 @@
                   }
                 }
               </ion-buttons>
-            </div>
           </div>
           <app-material-grid [style]="'display: block; ' + material_grid_style"
             [search_value]="search_value"
