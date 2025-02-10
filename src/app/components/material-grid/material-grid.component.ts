@@ -35,7 +35,7 @@ export type Material = {
 export class MaterialGridComponent implements OnInit {
   main_material_list: Material[] = [];
   search_value = input<string>();
-  materialEmitter = output<Material>();
+  materialEmitter = output<CheckoutItem>();
   rendered_material_list: WritableSignal<Material[]> = signal([]);
   currency_list: { currency_id: number; currency_code: string; currency_name: string; currency_is_basic: string; currency_part_name: string; currency_precision: string; currency_rate: string; currency_tva_rate: string; }[] = [];
   constructor(
@@ -66,7 +66,7 @@ export class MaterialGridComponent implements OnInit {
   getCurrencyCode(material_currency_id: number) {
     let currency = this.currency_list?.find((curr) => curr.currency_id == material_currency_id)
     return currency?.currency_code;
-  }
+}
 
   ngOnInit() {
    
