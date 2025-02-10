@@ -63,13 +63,12 @@ export class MainViewPage implements OnInit {
   }
   addNewItem(new_item: CheckoutItem) {
     new_item.material_quantity = 1;
-    new_item.selected_unit = new_item.material_unit.find((unit) => unit.material_unit_is_default);
     new_item.material_total_price = new_item.selected_unit?.default_price;
     this.checkout_item_list.push(JSON.parse(JSON.stringify(new_item)));
   }
 
   async addMaterialToCheckoutList(new_item: CheckoutItem) {
-    let material_already_added_index = this.checkout_item_list.findIndex((item, i) => new_item.material_id == item.material_id);
+    let material_already_added_index = this.checkout_item_list.findIndex((item, i) => new_item.material_id == item.material_id && new_item.selected_unit?.unit_id == item.selected_unit?.unit_id);
 
     if (material_already_added_index != -1) {
       this.checkout_item_list[material_already_added_index].material_quantity! += 1;

@@ -51,9 +51,12 @@ export class MaterialGridComponent implements OnInit {
     return false;
   }
 
-  async addMaterial(material: Material) {
-    if (material)
-      this.materialEmitter.emit(material);
+  async addMaterial(material: Material, unit: MaterialUnit) {
+    if (material && unit) {
+      let item: CheckoutItem = material; 
+      item.selected_unit = unit;      
+      this.materialEmitter.emit(item);
+    }
     else {
 
     }
