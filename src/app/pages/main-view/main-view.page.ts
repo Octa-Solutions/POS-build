@@ -156,6 +156,8 @@ export class MainViewPage implements OnInit {
       new_price: number;
     }
   ) {
+    if (!data.new_price)
+      data.new_price = 0;
     this.checkout_item_list[data.index].selected_unit!.default_price = Number(data.new_price.toFixed(2));
     this.checkout_item_list[data.index].material_total_price = Number((this.checkout_item_list[data.index].material_quantity! * data.new_price).toFixed(2));
     this.calculateTransactionTotal();
