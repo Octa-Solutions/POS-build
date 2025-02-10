@@ -66,7 +66,7 @@ export class MaterialGridComponent implements OnInit {
   getCurrencyCode(material_currency_id: number) {
     let currency = this.currency_list?.find((curr) => curr.currency_id == material_currency_id)
     return currency?.currency_code;
-}
+  }
 
   ngOnInit() {
    
