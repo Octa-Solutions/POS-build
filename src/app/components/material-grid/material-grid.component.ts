@@ -1,5 +1,6 @@
 import { Component, input, OnInit, output, signal, WritableSignal } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { CheckoutItem } from '../checkout-item-list/checkout-item-list.component';
 
 
 export type MaterialUnit = {
@@ -43,12 +44,16 @@ export class MaterialGridComponent implements OnInit {
   ) { }
 
   addMaterialByBarcode(barcode: string): boolean {
-    let material = this.main_material_list.find(material => 'material.material_barcode' == barcode);
-    if (material) {
-      this.addMaterial(material);
-      return true;
-    }
-    return false;
+    let selected_unit: MaterialUnit | undefined;
+    let item_added = this.main_material_list.find(async material => {
+      selected_unit = material.material_unit.find(unit => unit.material_unit_barcode == barcode);
+      if (selected_unit) {
+        await this.addMaterial(material, selected_unit);
+        return true; 
+      }
+      return false;
+    });
+    return !!item_added;
   }
 
   async addMaterial(material: Material, unit: MaterialUnit) {
@@ -66,7 +71,7 @@ export class MaterialGridComponent implements OnInit {
   getCurrencyCode(material_currency_id: number) {
     let currency = this.currency_list?.find((curr) => curr.currency_id == material_currency_id)
     return currency?.currency_code;
-}
+  }
 
   ngOnInit() {
    

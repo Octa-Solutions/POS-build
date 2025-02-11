@@ -3,7 +3,7 @@
     <ion-content class="no-search-result">
       <span> No Results For "{{ search_value() }}" </span>
     </ion-content>
-  }@else {
+  } @else {
     <ion-content class="no-search-result">
       <span> No Results Found. </span>
     </ion-content>
@@ -13,33 +13,30 @@
     <ion-grid>
       <ion-row>
         @for (material of rendered_material_list(); track $index) {
-          <ion-col size="6" size-md="4" size-lg="3">
-            <ion-card
-              class="ion-activatable ripple-parent"
-              (click)="addMaterial(material)"
-            >
-              <ion-ripple-effect></ion-ripple-effect>
-              <img [src]="material.material_image" />
-              <ion-card-header>
-                @for (unit of material.material_unit; track $index) {
-                  @if (unit.material_unit_is_default) {
-                    <ion-card-subtitle>{{ unit.unit_name }}</ion-card-subtitle>
-                  }
-                }
-                <ion-card-title>{{ material.material_name }}</ion-card-title>
-              </ion-card-header>
+          @for (unit of material.material_unit; track $index) {
+            <ion-col size="6" size-md="4" size-lg="3">
+              <ion-card
+                class="ion-activatable ripple-parent"
+                (click)="addMaterial(material,unit)"
+              >
+                <ion-ripple-effect></ion-ripple-effect>
+                <img [src]="material.material_image" />
+                <ion-card-header>
+                  <ion-card-subtitle>{{ unit.unit_name }}</ion-card-subtitle>
+                  <ion-card-title>{{ material.material_name }}</ion-card-title>
+                </ion-card-header>
 
-              <ion-card-content>
-                <ion-text color="primary"
-                  >@for (unit of material.material_unit; track $index) {
-                  @if (unit.material_unit_is_default) {
-                    <ion-card-subtitle> {{getCurrencyCode(material.material_currency_id)}} {{ unit.default_price }}</ion-card-subtitle>
-                  }
-                }</ion-text
-                >
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
+                <ion-card-content>
+                  <ion-text color="primary">
+                    <ion-card-subtitle>
+                      {{ getCurrencyCode(material.material_currency_id) }}
+                      {{ unit.default_price }}</ion-card-subtitle
+                    >
+                  </ion-text>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          }
         }
       </ion-row>
     </ion-grid>
