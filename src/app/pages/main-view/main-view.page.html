@@ -1,9 +1,35 @@
-<ion-content>
+<ion-menu contentId="main-content" #main_menu>
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Octa POS</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list>
+      @for (menu_item of menu_item_list; track $index) {
+        @if(menu_item.visible()){
+          <ion-item
+          (click)="menuItemClicked($index)"
+          [class]="'ion-activatable ripple-parent'" [color]="opened_menu_page_index() == $index ? 'primary' :null"
+          >
+          <ion-ripple-effect></ion-ripple-effect>
+          <span [class]="menu_item.icon"></span>
+          <ion-label> {{menu_item.text}} </ion-label>
+        </ion-item>
+      }
+      }
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<ion-content id="main-content">
   <ion-grid>
     <ion-row>
       <ion-col size="6" size-md="7">
         <ion-header #grid_header>
           <ion-toolbar>
+            <ion-buttons slot="start">
+              <ion-menu-button></ion-menu-button>
+            </ion-buttons>
             <div class="search-toolbar-container">
               <ion-searchbar
                 [placeholder]="
@@ -18,7 +44,7 @@
               @if (search_by_barcode) {
                 <span
                   (click)="toggleSearchMethod()"
-                  class="mdi mdi-barcode"
+                  class="mdi mdi-barcode-scan"
                 ></span>
               } @else {
                 <span
@@ -31,27 +57,27 @@
         </ion-header>
         <ion-content [style]="material_grid_content_style">
           <div class="category-list-container" #grid_categs>
-
-              <ion-buttons class="category-list">
-                @for (category of category_list; track $index) {
-                  <ion-button
-                    (click)="
-                      filterMaterialByCategory(category.material_category_id)
-                    "
-                    [class]="
-                      active_category_id() == category.material_category_id
-                        ? 'active-category'
-                        : ''
-                    "
-                    >{{ category.material_category_name }}</ion-button
-                  >
-                  @if ($index < category_list.length - 1) {
-                    <span>|</span>
-                  }
+            <ion-buttons class="category-list">
+              @for (category of category_list; track $index) {
+                <ion-button
+                  (click)="
+                    filterMaterialByCategory(category.material_category_id)
+                  "
+                  [class]="
+                    active_category_id() == category.material_category_id
+                      ? 'active-category'
+                      : ''
+                  "
+                  >{{ category.material_category_name }}</ion-button
+                >
+                @if ($index < category_list.length - 1) {
+                  <span>|</span>
                 }
-              </ion-buttons>
+              }
+            </ion-buttons>
           </div>
-          <app-material-grid [style]="'display: block; ' + material_grid_style"
+          <app-material-grid
+            [style]="'display: block; ' + material_grid_style"
             [search_value]="search_value"
             #MaterialGridComponent
             (materialEmitter)="addMaterialToCheckoutList($event)"
@@ -62,7 +88,7 @@
       <ion-col class="checkout-div" size="6" size-md="5">
         <ion-header #list_header>
           <ion-toolbar color="secondary">
-            <ion-title>Octa POS</ion-title>
+            <ion-title>{{is_refund_mode() ? 'Refund' : 'Sales'}}</ion-title>
           </ion-toolbar>
         </ion-header>
         <ion-content [style]="checkout_list_style">
@@ -75,22 +101,42 @@
         </ion-content>
         <ion-footer class="list-footer" #list_footer>
           <ion-toolbar>
-            <ion-button
-              [disabled]="checkout_item_list.length == 0"
-              (click)="pay()"
-              expand="block"
-              class="pay-btn"
-            >
-              <div>
-                <div>Pay</div>
-                <div class="total-amount">
-                  <div class="total-amount-money">
-                    {{ transaction_total() }}
+            @if (!is_refund_mode()) {
+              <ion-button
+                [disabled]="checkout_item_list.length == 0"
+                (click)="pay()"
+                expand="block"
+                class="pay-btn"
+              >
+                <div>
+                  <div>Pay</div>
+                  <div class="total-amount">
+                    <div class="total-amount-money">
+                      {{ transaction_total() }}
+                    </div>
+                    <div class="total-currency">$</div>
                   </div>
-                  <div class="total-currency">$</div>
                 </div>
-              </div>
-            </ion-button>
+              </ion-button>
+            } @else {
+              <ion-button
+                [disabled]="checkout_item_list.length == 0"
+                (click)="refund()"
+                expand="block"
+                class="pay-btn"
+                color="warning"
+              >
+                <div>
+                  <div>Refund</div>
+                  <div class="total-amount">
+                    <div class="total-amount-money">
+                      {{ transaction_total() }}
+                    </div>
+                    <div class="total-currency">$</div>
+                  </div>
+                </div>
+              </ion-button>
+            }
           </ion-toolbar>
         </ion-footer>
       </ion-col>

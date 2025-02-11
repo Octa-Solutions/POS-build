@@ -1,14 +1,27 @@
 import { Component, ElementRef, OnInit, ViewChild, WritableSignal, signal } from '@angular/core';
-import { IonSearchbar } from '@ionic/angular';
+import { IonMenu, IonSearchbar } from '@ionic/angular';
 import { CheckoutItem, qntUpdateEvent } from 'src/app/components/checkout-item-list/checkout-item-list.component';
 import { Material, MaterialGridComponent } from 'src/app/components/material-grid/material-grid.component';
 import { ApiService } from 'src/app/services/api/api.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { StorageService } from 'src/app/services/storage/storage.service';
 
+type TransactionItem = { material_id: number, material_quantity: number, unit_id: number, unit_price: number, };
+
+type MenuItem = {
+  text: string,
+  icon: string,
+  visible: WritableSignal<boolean>,
+  handler: Function
+}
 type Category = {
   material_category_id: number,
   material_category_name: string
+}
+
+type Transaction = {
+  transaction_item_list: TransactionItem[],
+  account_id: number | string,
 }
 
 @Component({
@@ -24,7 +37,7 @@ export class MainViewPage implements OnInit {
   @ViewChild('list_footer', { read: ElementRef }) list_footer: ElementRef | undefined;
   @ViewChild('grid_header', { read: ElementRef }) grid_header: ElementRef | undefined;
   @ViewChild('grid_categs', { read: ElementRef }) grid_categs: ElementRef | undefined;
-
+  @ViewChild('main_menu') main_menu: IonMenu | undefined;
   grid_header_height: number = 0;
   list_header_height: number = 0;
   list_footer_height: number = 0;
@@ -37,9 +50,13 @@ export class MainViewPage implements OnInit {
   category_list: Category[] = [{
     material_category_id: 0,
     material_category_name: ''
-}];
+  }];
   active_category_id: WritableSignal<number | undefined> = signal(undefined);
   material_grid_style: string = '';
+  is_refund_mode: WritableSignal<boolean> = signal(false);
+  is_sales_mode: WritableSignal<boolean> = signal(true);
+  opened_menu_page_index: WritableSignal<number> = signal(0);
+  menu_item_list: MenuItem[] = [];
   constructor(
     private apiService: ApiService,
     private storage: StorageService,
@@ -56,7 +73,7 @@ export class MainViewPage implements OnInit {
     this.checkout_item_list[index].material_quantity = new_quantity;
 
     // update item total price
-    this.checkout_item_list[index].material_total_price = Number((this.checkout_item_list[index].material_quantity! * this.checkout_item_list[index].selected_unit?.default_price!).toFixed(2));
+    this.checkout_item_list[index].material_total_price = Number((this.checkout_item_list[index].material_quantity! * this.checkout_item_list[index].selected_unit?.default_price!).toFixed(3));
 
     // recalculate invoice total
     this.calculateTransactionTotal();
@@ -72,7 +89,7 @@ export class MainViewPage implements OnInit {
 
     if (material_already_added_index != -1) {
       this.checkout_item_list[material_already_added_index].material_quantity! += 1;
-      this.checkout_item_list[material_already_added_index].material_total_price = Number((this.checkout_item_list[material_already_added_index].material_quantity! * this.checkout_item_list[material_already_added_index].selected_unit?.default_price!).toFixed(2));
+      this.checkout_item_list[material_already_added_index].material_total_price = Number((this.checkout_item_list[material_already_added_index].material_quantity! * this.checkout_item_list[material_already_added_index].selected_unit?.default_price!).toFixed(3));
     } else {
       this.addNewItem(new_item);
     }
@@ -84,7 +101,7 @@ export class MainViewPage implements OnInit {
 
     if (this.checkout_item_list[index].material_quantity! > 1) {
       this.checkout_item_list[index].material_quantity! -= 1;
-      this.checkout_item_list[index].material_total_price = Number((this.checkout_item_list[index].material_quantity! * this.checkout_item_list[index].selected_unit?.default_price!).toFixed(2));
+      this.checkout_item_list[index].material_total_price = Number((this.checkout_item_list[index].material_quantity! * this.checkout_item_list[index].selected_unit?.default_price!).toFixed(3));
     }
     else {
       this.checkout_item_list.splice(index, 1);
@@ -102,16 +119,80 @@ export class MainViewPage implements OnInit {
     this.calculateTransactionTotal();
   }
 
-  pay() {
+  async pay() {
+    await this.saveTransaction();
+    this.printTransaction();
     this.searchbar?.setFocus()
+    this.transaction_total.set(0);
     this.checkout_item_list = [];
   }
 
+  async refund() {
+    await this.saveRefundTransaction();
+    this.printRefundTransaction();
+    this.searchbar?.setFocus()
+    this.transaction_total.set(0);
+    this.checkout_item_list = [];
+  }
+  async saveTransaction() {
+
+    let saved_transaction_list: Transaction[] = await this.storage.get('transaction_list') || [];
+    let transaction_needed_data = this.checkout_item_list.map(({ material_id, material_quantity, selected_unit }) => {
+      return {
+        material_id: material_id!,
+        material_quantity: material_quantity!,
+        unit_id: selected_unit?.unit_id!,
+        unit_price: selected_unit?.default_price!,
+
+      }
+    })
+
+    saved_transaction_list.push(
+      {
+        account_id: 0,
+        transaction_item_list: transaction_needed_data,
+      }
+    );
+
+    this.storage.set('transaction_list', saved_transaction_list);
+
+  }
+
+  async saveRefundTransaction() {
+    let saved_refund_list: Transaction[] = await this.storage.get('refund_list') || [];
+    let transaction_needed_data = this.checkout_item_list.map(({ material_id, material_quantity, selected_unit }) => {
+      return {
+        material_id: material_id!,
+        material_quantity: material_quantity!,
+        unit_id: selected_unit?.unit_id!,
+        unit_price: selected_unit?.default_price!,
+
+      }
+    })
+
+    saved_refund_list.push(
+      {
+        account_id: 0,
+        transaction_item_list: transaction_needed_data,
+      }
+    );
+
+    this.storage.set('refund_list', saved_refund_list);
+
+  }
+
+
+  printTransaction() {
+
+  }
+  printRefundTransaction() {
+
+  }
   calculateTransactionTotal() {
 
     let total_value = 0;
     this.checkout_item_list.forEach((material) => { total_value = total_value + material.material_total_price! })
-    this.transaction_total.set(Number(total_value.toFixed(2)));
+    this.transaction_total.set(Number(total_value.toFixed(3)));
   }
 
 
@@ -135,7 +216,7 @@ export class MainViewPage implements OnInit {
     if (item_added)
       event.target.value = '';
     else {
-      this.notification.presentToast('Barcode Not Found',3000,'bottom','danger')
+      this.notification.presentToast('Barcode Not Found', 3000, 'bottom', 'danger')
     }
     return;
   }
@@ -158,8 +239,8 @@ export class MainViewPage implements OnInit {
   ) {
     if (!data.new_price)
       data.new_price = 0;
-    this.checkout_item_list[data.index].selected_unit!.default_price = Number(data.new_price.toFixed(2));
-    this.checkout_item_list[data.index].material_total_price = Number((this.checkout_item_list[data.index].material_quantity! * data.new_price).toFixed(2));
+    this.checkout_item_list[data.index].selected_unit!.default_price = Number(data.new_price.toFixed(3));
+    this.checkout_item_list[data.index].material_total_price = Number((this.checkout_item_list[data.index].material_quantity! * data.new_price).toFixed(3));
     this.calculateTransactionTotal();
   }
   //
@@ -176,7 +257,11 @@ export class MainViewPage implements OnInit {
     if (this.search_by_barcode)
       return;
     this.search_value = event.target.value
-    console.log(event);
+
+    if (!this.search_value) {
+      this.filterMaterialByCategory(this.active_category_id())
+      return;
+    }
 
     this.MaterialGridComponent!.rendered_material_list.set(this.MaterialGridComponent?.main_material_list.filter((item: Material) =>
       (item.material_name).toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase())) || []);
@@ -3383,6 +3468,57 @@ export class MainViewPage implements OnInit {
       this.filterMaterialByCategory();
     })
   }
+  openRefundMode() {
+    this.is_refund_mode.set(true);
+    this.is_sales_mode.set(false);
+    
+    this.main_menu?.close();
+  }
+  closeRefundMode() {
+    this.is_refund_mode.set(false);
+    this.is_sales_mode.set(true);
+
+    this.main_menu?.close();
+  }
+  async initStorage() {
+    if (!(await this.storage.get('transaction_list')))
+      this.storage.set('transaction_list', [])
+  }
+  showBoxes() {
+
+  }
+  initMenuItemList() {
+    this.menu_item_list = [
+      {
+        text: 'Sales',
+        icon: 'mdi mdi-cart-outline',
+        handler: this.closeRefundMode,
+        visible: signal(true)
+      },
+      {
+        text: 'Refund',
+        icon: 'mdi mdi-cash-refund',
+        handler: this.openRefundMode,
+        visible: signal(true)
+      },
+      {
+        text: 'My Box',
+        icon: 'mdi mdi-cash-register',
+        handler: this.showBoxes,
+        visible: signal(true)
+      },
+      {
+        text: 'Transaction History',
+        icon: 'mdi mdi-clipboard-text-clock-outline',
+        handler: this.showBoxes,
+        visible: signal(true)
+      },
+    ]
+  }
+  menuItemClicked(index : number) {
+    this.menu_item_list[index].handler.call(this)
+    this.opened_menu_page_index.set(index);
+  }
   ngOnInit() {
 
   }
@@ -3390,9 +3526,11 @@ export class MainViewPage implements OnInit {
   ionViewDidEnter() {
     this.setHeights();
     this.initData();
+    this.initStorage();
+    this.initMenuItemList();
   }
   setHeights() {
-    
+
     this.grid_header_height = this.grid_header?.nativeElement.clientHeight || 0;
     this.list_header_height = this.list_header?.nativeElement.clientHeight || 0;
     this.list_footer_height = this.list_footer?.nativeElement.clientHeight || 0;

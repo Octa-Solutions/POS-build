@@ -81,3 +81,13 @@ ion-grid {
     color: var(--ion-color-primary-contrast);
     text-decoration: underline;
 }
+ion-menu{
+    ion-item{
+        color: var(--ion-color-primary);
+        font-weight: bold;
+    }
+    span.mdi{
+        font-size: 32px;
+        margin-inline-end: 10px;
+    }
+}
