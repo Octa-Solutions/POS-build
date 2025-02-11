@@ -12,7 +12,8 @@ type MenuItem = {
   text: string,
   icon: string,
   visible: WritableSignal<boolean>,
-  handler: Function
+  handler: Function,
+  is_seperate_page?: boolean
 }
 type Category = {
   material_category_id: number,
@@ -3493,13 +3494,17 @@ export class MainViewPage implements OnInit {
         text: 'Sales',
         icon: 'mdi mdi-cart-outline',
         handler: this.closeRefundMode,
-        visible: signal(true)
+        visible: signal(true),
+        is_seperate_page: true
+
       },
       {
         text: 'Refund',
         icon: 'mdi mdi-cash-refund',
         handler: this.openRefundMode,
-        visible: signal(true)
+        visible: signal(true),
+        is_seperate_page: true
+
       },
       {
         text: 'My Box',
@@ -3510,14 +3515,15 @@ export class MainViewPage implements OnInit {
       {
         text: 'Transaction History',
         icon: 'mdi mdi-clipboard-text-clock-outline',
-        handler: this.showBoxes,
+        handler: this.openTransactionHistory,
         visible: signal(true)
       },
     ]
   }
-  menuItemClicked(index : number) {
+  menuItemClicked(index: number, move_selected_pointer: boolean = false) {
     this.menu_item_list[index].handler.call(this)
-    this.opened_menu_page_index.set(index);
+    if (move_selected_pointer)
+      this.opened_menu_page_index.set(index);
   }
   ngOnInit() {
 
