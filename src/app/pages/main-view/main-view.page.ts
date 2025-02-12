@@ -26,6 +26,16 @@ type Transaction = {
   transaction_item_list: TransactionItem[],
   account_id: number | string,
 }
+export type Currency = {
+  currency_id: number,
+  currency_code: string,
+  currency_name: string,
+  currency_is_basic: boolean,
+  currency_part_name: string,
+  currency_precision: number,
+  currency_rate: number,
+  currency_tva_rate: number
+}
 
 @Component({
   selector: 'app-main-view',
