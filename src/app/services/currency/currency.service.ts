@@ -1,9 +1,17 @@
 import { Injectable, OnInit } from '@angular/core';
 import { StorageService } from '../storage/storage.service';
-import { Currency } from 'src/app/pages/main-view/main-view.page';
 
 
-
+export type Currency = {
+  currency_id: number,
+  currency_code: string,
+  currency_name: string,
+  currency_is_basic: boolean,
+  currency_part_name: string,
+  currency_precision: number,
+  currency_rate: number,
+  currency_tva_rate: number
+}
 
 @Injectable({
   providedIn: 'root'

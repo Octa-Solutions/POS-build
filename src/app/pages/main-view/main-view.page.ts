@@ -5,6 +5,7 @@ import { CheckoutItem, qntUpdateEvent } from 'src/app/components/checkout-item-l
 import { Material, MaterialGridComponent } from 'src/app/components/material-grid/material-grid.component';
 import { TransactionHistoryComponent } from 'src/app/components/transaction-history/transaction-history.component';
 import { ApiService } from 'src/app/services/api/api.service';
+import { Currency } from 'src/app/services/currency/currency.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { StorageService } from 'src/app/services/storage/storage.service';
 
@@ -25,16 +26,6 @@ type Category = {
 type Transaction = {
   transaction_item_list: TransactionItem[],
   account_id: number | string,
-}
-export type Currency = {
-  currency_id: number,
-  currency_code: string,
-  currency_name: string,
-  currency_is_basic: boolean,
-  currency_part_name: string,
-  currency_precision: number,
-  currency_rate: number,
-  currency_tva_rate: number
 }
 
 @Component({
