@@ -1,7 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild, WritableSignal, signal } from '@angular/core';
-import { IonMenu, IonSearchbar } from '@ionic/angular';
+import { IonMenu, IonSearchbar, ModalController } from '@ionic/angular';
+import { BoxesComponent } from 'src/app/components/boxes/boxes.component';
 import { CheckoutItem, qntUpdateEvent } from 'src/app/components/checkout-item-list/checkout-item-list.component';
 import { Material, MaterialGridComponent } from 'src/app/components/material-grid/material-grid.component';
+import { TransactionHistoryComponent } from 'src/app/components/transaction-history/transaction-history.component';
 import { ApiService } from 'src/app/services/api/api.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { StorageService } from 'src/app/services/storage/storage.service';
@@ -61,7 +63,9 @@ export class MainViewPage implements OnInit {
   constructor(
     private apiService: ApiService,
     private storage: StorageService,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private modal: ModalController
+
 
   ) { }
 
@@ -3485,7 +3489,15 @@ export class MainViewPage implements OnInit {
     if (!(await this.storage.get('transaction_list')))
       this.storage.set('transaction_list', [])
   }
-  showBoxes() {
+  async showBoxes() {
+    (await this.modal.create({
+      component: BoxesComponent
+    })).present();
+  }
+  async openTransactionHistory() {
+    (await this.modal.create({
+      component: TransactionHistoryComponent
+    })).present();
 
   }
   initMenuItemList() {
