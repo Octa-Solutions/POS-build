@@ -38,7 +38,7 @@
     <ion-col size="2" class="unit-price-col">
       $
       <ion-input min="0"
-        [ngModel]="checkout_item.selected_unit?.default_price"
+        [ngModel]="checkout_item.checkout_unit_price"
         (ngModelChange)="changeItemUnitPrice($event, i)"
         type="number"
         placeholder="0.00"

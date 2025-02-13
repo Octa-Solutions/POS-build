@@ -79,14 +79,28 @@ export class MainViewPage implements OnInit {
     this.checkout_item_list[index].material_quantity = new_quantity;
 
     // update item total price
-    this.checkout_item_list[index].material_total_price = Number((this.checkout_item_list[index].material_quantity! * this.checkout_item_list[index].selected_unit?.default_price!).toFixed(3));
+    this.checkout_item_list[index].material_total_price = Number((this.checkout_item_list[index].material_quantity! * this.checkout_item_list[index].checkout_unit_price!).toFixed(3));
 
     // recalculate invoice total
     this.calculateTransactionTotal();
   }
   addNewItem(new_item: CheckoutItem) {
     new_item.material_quantity = 1;
-    new_item.material_total_price = new_item.selected_unit?.default_price;
+
+    let item_price = new_item.selected_unit?.default_price;
+
+    let material_currency_id = new_item.material_currency_id;
+    let material_currency = this.currency_list.find(currency => currency.currency_id == material_currency_id);
+
+    let user_default_currency = this.user_data.default_currency_id
+    let user_currency = this.currency_list.find(currency => currency.currency_id == user_default_currency);
+
+    if (material_currency_id != user_default_currency) {
+      item_price = this.currencyService.convertCurrency(item_price, material_currency, user_currency);
+    }
+
+    new_item.material_total_price = item_price;
+    new_item.checkout_unit_price = item_price
     this.checkout_item_list.push(JSON.parse(JSON.stringify(new_item)));
   }
 
@@ -95,7 +109,7 @@ export class MainViewPage implements OnInit {
 
     if (material_already_added_index != -1) {
       this.checkout_item_list[material_already_added_index].material_quantity! += 1;
-      this.checkout_item_list[material_already_added_index].material_total_price = Number((this.checkout_item_list[material_already_added_index].material_quantity! * this.checkout_item_list[material_already_added_index].selected_unit?.default_price!).toFixed(3));
+      this.checkout_item_list[material_already_added_index].material_total_price = Number((this.checkout_item_list[material_already_added_index].material_quantity! * this.checkout_item_list[material_already_added_index].checkout_unit_price!).toFixed(3));
     } else {
       this.addNewItem(new_item);
     }
@@ -107,7 +121,7 @@ export class MainViewPage implements OnInit {
 
     if (this.checkout_item_list[index].material_quantity! > 1) {
       this.checkout_item_list[index].material_quantity! -= 1;
-      this.checkout_item_list[index].material_total_price = Number((this.checkout_item_list[index].material_quantity! * this.checkout_item_list[index].selected_unit?.default_price!).toFixed(3));
+      this.checkout_item_list[index].material_total_price = Number((this.checkout_item_list[index].material_quantity! * this.checkout_item_list[index].checkout_unit_price!).toFixed(3));
     }
     else {
       this.checkout_item_list.splice(index, 1);
@@ -117,7 +131,7 @@ export class MainViewPage implements OnInit {
 
   editCheckoutItemQuantity(index: number, new_quantity: number) {
     this.checkout_item_list[index].material_quantity = new_quantity;
-    this.checkout_item_list[index].material_total_price = this.checkout_item_list[index]!.selected_unit?.default_price! * new_quantity;
+    this.checkout_item_list[index].material_total_price = this.checkout_item_list[index]!.checkout_unit_price! * new_quantity;
   }
 
   deleteItemFromList(index: number) {
@@ -143,15 +157,20 @@ export class MainViewPage implements OnInit {
   async saveTransaction() {
 
     let saved_transaction_list: Transaction[] = await this.storage.get('transaction_list') || [];
-    let transaction_needed_data = this.checkout_item_list.map(({ material_id, material_quantity, selected_unit }) => {
+    let boxes: Box[] = await this.storage.get('boxes');
+    let default_box_index = boxes.findIndex(box => box.currency_id == this.user_data.default_currency_id);
+    let transaction_needed_data = this.checkout_item_list.map(({ material_id, material_quantity, selected_unit, checkout_unit_price }) => {
+      if (!boxes[default_box_index]?.balance)
+        boxes[default_box_index].balance = 0
+      let new_balance = boxes[default_box_index].balance + material_quantity! * checkout_unit_price!;
+      boxes[default_box_index].balance = Number(new_balance.toFixed(3));
       return {
         material_id: material_id!,
         material_quantity: material_quantity!,
         unit_id: selected_unit?.unit_id!,
-        unit_price: selected_unit?.default_price!,
-
+        unit_price: checkout_unit_price!
       }
-    })
+    });
 
     saved_transaction_list.push(
       {
@@ -166,12 +185,18 @@ export class MainViewPage implements OnInit {
 
   async saveRefundTransaction() {
     let saved_refund_list: Transaction[] = await this.storage.get('refund_list') || [];
-    let transaction_needed_data = this.checkout_item_list.map(({ material_id, material_quantity, selected_unit }) => {
+    let boxes: Box[] = await this.storage.get('boxes');
+    let default_box_index = boxes.findIndex(box => box.currency_id == this.user_data.default_currency_id);
+    let transaction_needed_data = this.checkout_item_list.map(({ material_id, material_quantity, selected_unit, checkout_unit_price }) => {
+      if (!boxes[default_box_index]?.balance)
+        boxes[default_box_index].balance = 0
+      let new_balance = boxes[default_box_index].balance - material_quantity! * checkout_unit_price!;
+      boxes[default_box_index].balance = Number(new_balance.toFixed(3));
       return {
         material_id: material_id!,
         material_quantity: material_quantity!,
         unit_id: selected_unit?.unit_id!,
-        unit_price: selected_unit?.default_price!,
+        unit_price: checkout_unit_price!,
 
       }
     })
@@ -245,7 +270,7 @@ export class MainViewPage implements OnInit {
   ) {
     if (!data.new_price)
       data.new_price = 0;
-    this.checkout_item_list[data.index].selected_unit!.default_price = Number(data.new_price.toFixed(3));
+    this.checkout_item_list[data.index].checkout_unit_price = Number(data.new_price.toFixed(3));
     this.checkout_item_list[data.index].material_total_price = Number((this.checkout_item_list[data.index].material_quantity! * data.new_price).toFixed(3));
     this.calculateTransactionTotal();
   }

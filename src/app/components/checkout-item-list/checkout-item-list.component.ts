@@ -3,7 +3,7 @@ import { Component, input, OnInit, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonCol, IonGrid, IonInput, IonRow, IonIcon } from '@ionic/angular/standalone';
 import { Material, MaterialUnit } from '../material-grid/material-grid.component';
-export type CheckoutItem = Material & { material_unit_id?: number, material_quantity?: number, selected_unit?: MaterialUnit, material_total_price?: number };
+export type CheckoutItem = Material & {checkout_unit_price?: number, material_unit_id?: number, material_quantity?: number, selected_unit?: MaterialUnit, material_total_price?: number };
 export type qntUpdateEvent = { index: number, type: 'add' | 'remove' | 'edit', new_quantity?: number };
 @Component({
   selector: 'app-checkout-item-list',
