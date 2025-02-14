@@ -63,8 +63,7 @@ export class MainViewPage implements OnInit {
   menu_item_list: MenuItem[] = [];
   constructor(
     private apiService: ApiService,
-    private storage: StorageService,
-    private notification: NotificationService,
+    private notification: ToastService,
     private modal: ModalController
 
 

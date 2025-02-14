@@ -3,7 +3,7 @@ import { ToastController } from '@ionic/angular';
 @Injectable({
   providedIn: 'root'
 })
-export class NotificationService {
+export class ToastService {
   constructor(private toastCtrl: ToastController) {
   }
   async presentToast(message: string, duration: number, position: any, color: string) {
